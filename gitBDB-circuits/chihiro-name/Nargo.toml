@@ -1,0 +1,8 @@
+[package]
+name = "chihiro_name"
+type = "bin"
+authors = ["gitBDB"]
+compiler_version = ">=0.36.0"
+
+[dependencies]
+# std is included automatically by Noir

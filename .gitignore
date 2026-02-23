@@ -1,0 +1,23 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Build outputs
+target/
+dist/
+build/
+
+# Vite
+.vite/
+
+# Environment (contiene contract IDs pero no secrets)
+# .env 
+
+# Rust
+**/*.wasm
+Cargo.lock
+
+# Misc
+.DS_Store
+*.log
+proof.json
