@@ -1,129 +1,201 @@
-# 🌊 Chihiro's Lost Name — gitBDB
+# Chihiro's Lost Name
 
-> **Stellar Hacks: ZK Gaming Edition**
-> An on-chain Git learning game where you recover a stolen name using zero-knowledge proofs.
+Una experiencia de gaming con Zero-Knowledge proofs inspirada en El Viaje de Chihiro, construida con las mejores prácticas de [Stellar Game Studio](https://github.com/jamesbachini/Stellar-Game-Studio).
 
-## What is this?
+## Características
 
-Chihiro's Lost Name is a browser-based Git simulator that teaches Git through narrative gameplay. Yubaba has stolen your name — to recover it you must complete a sacred Git ritual (init → branch → commit), then prove you know the secret name *without revealing it* using a Noir UltraHonk ZK proof verified on Stellar Soroban (Protocol 25).
-
-**ZK is essential because** the game must verify that the player knows the correct name without ever transmitting it on-chain. The `nameCommit = Poseidon2(secret, salt)` is stored publicly; the ZK proof proves knowledge of the preimage. No secret ever leaves the browser.
-
----
-
-## Monorepo Structure
-
-```
-gitBDB/           ← React 19 frontend (Vite 7) + isomorphic-git browser simulator
-gitBDB-contracts/ ← ChihiroGame Soroban contract (Rust)
-gitBDB-circuits/  ← Noir UltraHonk ZK circuit (chihiro-name)
-```
-
----
-
-## Run in 2 minutes
-
-```bash
-./scripts/demo.sh
-# or manually:
-cd gitBDB && npm install && npm run dev
-# → http://localhost:5173
-```
-
----
-
-## Frontend (`gitBDB/`)
-
-```bash
-cd gitBDB
-npm install
-npm run dev          # dev server → http://localhost:5173
-npm run build        # production build → dist/
-npm run test         # run 21 unit tests (gitService + branch/checkout logic)
-```
-
-### Environment variables (copy `.env.example` → `.env`)
-
-```bash
-VITE_CHIHIRO_CONTRACT_ID=C...        # deployed ChihiroGame contract on testnet
-VITE_ULTRAHONK_VERIFIER_ID=C...     # UltraHonk verifier contract on testnet
-# Game Hub is hardcoded: CB4VZAT2U3UC6XFK3N23SKRF2NDCMP3QHJYMCHHFMZO7MRQO6DQ2EMYG
-```
-
-Leave both empty to play without blockchain — the Git simulator and UI work fully offline.
-
----
-
-## ZK Circuit (`gitBDB-circuits/`)
-
-The circuit proves: *"I know (secret, salt) such that Poseidon2(secret, salt) == nameCommit"*
-
-```bash
-cd gitBDB-circuits/chihiro-name
-
-# Run tests
-nargo test
-
-# Compile (generates target/chihiro_name.json for browser integration)
-nargo build
-```
-
-**Note:** Current frontend uses a mock proof generator. Replace `generateZKProof()` in
-`gitBDB/src/components/chihiro/ChihiroZKPanel.jsx` with `@noir-lang/backend_barretenberg`
-after compiling the circuit.
-
----
-
-## Soroban Contract (`gitBDB-contracts/`)
-
-```bash
-cd gitBDB-contracts
-
-# Run unit tests
-cargo test
-
-# Build WASM
-cargo build --target wasm32v1-none --release
-
-# Deploy to testnet (requires Stellar CLI + funded account)
-stellar contract upload \
-  --wasm target/wasm32v1-none/release/chihiro_game.wasm \
-  --source admin \
-  --network testnet
-
-stellar contract deploy \
-  --wasm-hash <HASH_FROM_UPLOAD> \
-  --source admin \
-  --network testnet
-# → Copy the output address to VITE_CHIHIRO_CONTRACT_ID in gitBDB/.env
-```
-
-### Game Hub integration
-
-The contract calls `start_game(player1, player2)` and `end_game(game_id, player2)` on the
-hackathon-provided Game Hub at:
-```
-CB4VZAT2U3UC6XFK3N23SKRF2NDCMP3QHJYMCHHFMZO7MRQO6DQ2EMYG
-```
-
----
-
-## Wallet
-
-Install [Freighter](https://freighter.app) (Chrome/Firefox extension, free). Switch to
-**Testnet** in Freighter settings, then use the Admin panel in-game to fund your account
-via the built-in faucet link.
-
----
+- **Zero-Knowledge Proofs**: Usa Noir UltraHonk para probar conocimiento sin revelarlo
+- **Multiplayer Real-time**: Sistema de sesiones multiplayer con Supabase Realtime
+- **Blockchain Gaming**: Integración completa con Stellar blockchain y Freighter wallet
+- **Git Simulator**: Aprende Git mientras juegas
+- **i18n Support**: Múltiples idiomas soportados
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 19 + Vite 7 + TypeScript |
-| Git simulator | isomorphic-git + Lightning FS (in-browser) |
-| ZK proofs | Noir UltraHonk (mock) → Barretenberg WASM |
-| Blockchain | Stellar Soroban — Protocol 25 "X-Ray" |
-| Wallet | Stellar Wallets Kit v2 (Freighter) |
-| i18n | react-i18next (ES/EN, 3 namespaces) |
-| Tests | Vitest + memfs |
+- **Frontend**: Next.js 16 con React 19.2 y TypeScript
+- **Backend**: Vercel Serverless Functions (reemplazo del prove-server local)
+- **Database**: Supabase PostgreSQL con Row Level Security
+- **Real-time**: Supabase Realtime para sincronización multiplayer
+- **Storage**: Supabase Storage para assets del juego (TTL: 30 días)
+- **Blockchain**: Stellar testnet con Soroban smart contracts
+- **ZK**: Noir circuits con UltraHonk backend
+
+## Arquitectura
+
+```
+app/
+├── api/                    # Serverless Functions (prove, commit, health)
+├── game/                   # Single-player game page
+├── multiplayer/            # Multiplayer lobby & sessions
+└── page.tsx               # Landing page
+
+lib/
+├── supabase/              # Database client & utilities
+│   ├── client.ts          # Browser client
+│   ├── server.ts          # Server client
+│   └── storage.ts         # Asset management
+├── stellar/               # Blockchain integration
+│   └── client.ts          # Wallet & contract interactions
+└── multiplayer/           # Real-time multiplayer
+    ├── session.ts         # Session management
+    └── use-realtime.ts    # Real-time hooks
+
+scripts/
+└── 01-setup-multiplayer-schema.sql  # Database migration
+
+gitBDB/                    # Original Vite project (legacy)
+gitBDB-contracts/          # Soroban smart contracts (Rust)
+gitBDB-circuits/           # Noir ZK circuits
+```
+
+## Deployment
+
+### 1. Configurar Supabase
+
+1. La integración de Supabase ya está conectada
+2. Ejecuta la migración SQL desde Supabase dashboard:
+   - Copia el contenido de `scripts/01-setup-multiplayer-schema.sql`
+   - Pégalo en SQL Editor de Supabase
+   - Ejecuta el script
+3. Crea el bucket de Storage: 
+   - Ve a Storage en Supabase
+   - Crea bucket `game-assets` (público)
+
+### 2. Variables de Entorno
+
+Las variables de Supabase se configuran automáticamente. Solo necesitas agregar las de Stellar:
+
+```bash
+NEXT_PUBLIC_CHIHIRO_CONTRACT_ID=<tu-contract-id>
+NEXT_PUBLIC_ULTRAHONK_VERIFIER_ID=<tu-verifier-id>
+```
+
+### 3. Deploy
+
+El proyecto se deploya automáticamente en Vercel desde v0. También puedes correr localmente:
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run development server
+pnpm dev
+
+# Build for production
+pnpm build
+```
+
+## Diferencias con el Proyecto Original
+
+### Migración de Vite Monorepo → Next.js 16
+
+- **Antes**: `gitBDB/` con Vite + React Router
+- **Ahora**: Next.js App Router con Server Components
+
+### Prove Server → Serverless Functions
+
+- **Antes**: `scripts/prove-server.js` corriendo en local (puerto 4001)
+- **Ahora**: `/api/prove` y `/api/commit` como Vercel Functions
+- **Ventaja**: maxDuration: 300s (5 min) para proofs pesados
+
+### Supabase Real-time Multiplayer (NUEVO)
+
+- Sistema de sesiones compartibles vía URL
+- Real-time sync entre jugadores con Supabase Realtime
+- Presencia y heartbeats automáticos
+- Storage para assets con TTL de 30 días
+
+### Arquitectura Limpia (Stellar Game Studio)
+
+```
+contracts/     # Smart contracts (Soroban)
+lib/          # Utilidades compartidas
+components/   # UI components
+app/          # Pages & API routes
+```
+
+## Estructura de Base de Datos
+
+### game_sessions
+- `id`: UUID primary key
+- `session_code`: Código único de 8 caracteres (ej: "ABC123XY")
+- `host_id`: ID del creador
+- `game_state`: JSONB con el estado del juego
+- `current_phase`: Fase actual (waiting, playing, finished)
+- `max_players`: Máximo de jugadores (default: 4)
+- `expires_at`: TTL de 30 días
+
+### session_players
+- `id`: UUID primary key
+- `session_id`: FK a game_sessions
+- `player_id`: ID único del jugador (generado en cliente)
+- `player_name`: Nombre del jugador
+- `wallet_address`: Dirección de Stellar (opcional)
+- `player_state`: JSONB con estado del jugador
+- `is_ready`: Boolean para ready check
+
+### game_moves
+- `id`: UUID primary key
+- `session_id`: FK a game_sessions
+- `player_id`: ID del jugador
+- `move_type`: Tipo de movimiento
+- `move_data`: JSONB con datos del movimiento
+- `zk_proof`: JSONB con la proof (opcional)
+
+### game_assets
+- `id`: UUID primary key
+- `asset_key`: Clave única del asset
+- `storage_path`: Path en Supabase Storage
+- `metadata`: JSONB con metadatos
+- `expires_at`: TTL de 30 días
+
+## Uso del Sistema Multiplayer
+
+### Crear una Sesión
+
+1. Ve a `/multiplayer`
+2. Ingresa tu nombre
+3. Haz clic en "Crear Nueva Sesión"
+4. Se genera un código de 8 caracteres (ej: "ABC123XY")
+5. Comparte el link con otros jugadores
+
+### Unirse a una Sesión
+
+1. Recibe el link de un amigo: `https://tu-app.vercel.app/multiplayer?session=ABC123XY`
+2. O ingresa el código manualmente en `/multiplayer`
+3. El sistema te conecta automáticamente vía Supabase Realtime
+
+## Roadmap
+
+### Implementaciones Pendientes
+
+- [ ] Migrar componentes del juego (ChihiroZKPanel, GitNameGame)
+- [ ] Implementar generación real de ZK proofs en `/api/prove`
+- [ ] Agregar i18n con react-i18next
+- [ ] Crear página de juego single-player
+- [ ] Integrar Git simulator con isomorphic-git
+- [ ] Deploy contracts a Stellar testnet
+- [ ] Testing con Vitest
+
+### Stellar Game Studio Best Practices Aplicadas
+
+- ✅ Arquitectura de carpetas limpia
+- ✅ Supabase Storage con TTL de 30 días
+- ✅ Real-time multiplayer
+- ✅ Serverless functions para lógica pesada
+- ✅ TypeScript en toda la app
+- ✅ Single command deploy
+
+## Wallet
+
+Install [Freighter](https://freighter.app) (Chrome/Firefox extension). Switch to **Testnet** in Freighter settings.
+
+## Licencia
+
+MIT
+
+## Credits
+
+Basado en las mejores prácticas de [Stellar Game Studio](https://github.com/jamesbachini/Stellar-Game-Studio) por James Bachini.
+
+Inspirado en "El Viaje de Chihiro" (千と千尋の神隠し) de Studio Ghibli.

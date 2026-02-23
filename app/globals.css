@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+  /* Color palette inspired by Spirited Away + Stellar Game Studio */
+  --color-bathhouse-night: #1a1a2e;
+  --color-spirit-mist: #16213e;
+  --color-chihiro-pink: #e94560;
+  --color-haku-teal: #0f3460;
+  --color-gold-seal: #f4b942;
+  --color-moonlight: #eef4ed;
+  
+  /* Semantic tokens */
+  --color-background: var(--color-bathhouse-night);
+  --color-foreground: var(--color-moonlight);
+  --color-card: var(--color-spirit-mist);
+  --color-card-foreground: var(--color-moonlight);
+  --color-primary: var(--color-chihiro-pink);
+  --color-primary-foreground: var(--color-moonlight);
+  --color-secondary: var(--color-haku-teal);
+  --color-secondary-foreground: var(--color-moonlight);
+  --color-accent: var(--color-gold-seal);
+  --color-accent-foreground: var(--color-bathhouse-night);
+  --color-muted: #2d3561;
+  --color-muted-foreground: #a8b2d1;
+  --color-border: #303a52;
+  
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  line-height: 1.6;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-spirit-mist);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-chihiro-pink);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-seal);
+}
+
+/* Animations from Stellar Game Studio pattern */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
