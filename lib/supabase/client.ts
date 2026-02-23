@@ -8,11 +8,12 @@ export function getSupabaseClient() {
     return supabaseClient
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Missing Supabase environment variables')
+    console.warn('[v0] Supabase not configured - multiplayer features disabled')
+    return null
   }
 
   supabaseClient = createBrowserClient(supabaseUrl, supabaseAnonKey)

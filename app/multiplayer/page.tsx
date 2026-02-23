@@ -210,19 +210,19 @@ export default function MultiplayerPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Multijugador</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold mb-2">Multijugador</h1>
+          <p className="text-slate-400">
             Crea una sesión o únete usando un código
           </p>
         </div>
 
         {/* Name Input */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+        <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-card-foreground mb-2">
+            <label className="block text-sm font-medium mb-2">
               Tu Nombre
             </label>
             <input
@@ -230,14 +230,14 @@ export default function MultiplayerPage() {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               placeholder="Ingresa tu nombre"
-              className="w-full bg-background border border-border rounded px-4 py-2 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           <button
             onClick={handleCreateSession}
             disabled={isCreating || !playerName.trim()}
-            className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-white text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-slate-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? 'Creando...' : 'Crear Nueva Sesión'}
           </button>
@@ -245,17 +245,17 @@ export default function MultiplayerPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border"></div>
+            <div className="w-full border-t border-slate-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-background px-2 text-muted-foreground">o</span>
+            <span className="bg-slate-900 px-2 text-slate-500">o</span>
           </div>
         </div>
 
         {/* Join Session */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+        <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-lg p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-card-foreground mb-2">
+            <label className="block text-sm font-medium mb-2">
               Código de Sesión
             </label>
             <input
@@ -263,7 +263,7 @@ export default function MultiplayerPage() {
               value={sessionCode}
               onChange={(e) => setSessionCode(e.target.value.toUpperCase())}
               placeholder="Ej: ABC123XY"
-              className="w-full bg-background border border-border rounded px-4 py-2 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-secondary uppercase font-mono"
+              className="w-full bg-slate-900 border border-slate-600 rounded px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase font-mono"
               maxLength={8}
             />
           </div>
@@ -271,14 +271,14 @@ export default function MultiplayerPage() {
           <button
             onClick={handleJoinSession}
             disabled={isJoining || !sessionCode.trim() || !playerName.trim()}
-            className="w-full bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isJoining ? 'Uniéndose...' : 'Unirse a Sesión'}
           </button>
         </div>
 
         {error && (
-          <div className="bg-primary/10 border border-primary rounded-lg p-4 text-primary text-sm text-center">
+          <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 text-red-400 text-sm text-center">
             {error}
           </div>
         )}
@@ -286,7 +286,7 @@ export default function MultiplayerPage() {
         <div className="text-center">
           <button
             onClick={() => router.push('/')}
-            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+            className="text-slate-400 hover:text-white text-sm transition-colors"
           >
             ← Volver al inicio
           </button>
